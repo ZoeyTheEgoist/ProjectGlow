@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
+#include "DrawDebugHelpers.h"
 #include "PlayerCharacter.h"
 
 // Sets default values
@@ -45,6 +45,9 @@ APlayerCharacter::APlayerCharacter()
 	WalkSpeed = 400;
 	SprintSpeed = 650;
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+
+	// Interaction Properties
+	TraceDistance = 1000;
 
 }
 
@@ -94,6 +97,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	//Sprint
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &APlayerCharacter::Sprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &APlayerCharacter::StopSprinting);
+
+	//Interact
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &APlayerCharacter::Interact);
 }
 
 
@@ -124,7 +130,6 @@ void APlayerCharacter::MoveRight(float Axis)
 void APlayerCharacter::Sprint()
 {
 	if (!bDead) {
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Sprinting"));
 		GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
 	}
 }
@@ -132,8 +137,39 @@ void APlayerCharacter::Sprint()
 void APlayerCharacter::StopSprinting()
 {
 	if (!bDead) {
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Stopped Sprinting"));
 		GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 	}
 }
 
+void APlayerCharacter::Interact()
+{
+	if (!bDead) {
+		FHitResult OutHit;
+		FVector Start = FollowCamera->GetComponentLocation();
+		FVector End = ((FollowCamera->GetForwardVector() * TraceDistance) + Start);
+		FCollisionQueryParams CollisionParams;
+
+		DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 1.0f);
+
+		if (GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECC_Visibility, CollisionParams))
+		{
+			if (OutHit.bBlockingHit)
+			{
+				/*
+				if (GEngine) {
+					GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("You are hitting: %s"), *OutHit.GetActor()->GetName()));
+					GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Impact Point: %s"), *OutHit.ImpactPoint.ToString()));
+					GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Normal Point: %s"), *OutHit.ImpactNormal.ToString()));
+				}*/
+
+				if (OutHit.GetActor()->GetClass()->ImplementsInterface(UInteractInterface::StaticClass())) {
+					Cast <IInteractInterface>(OutHit.GetActor())->InteractPure(); // Call through the interface since we do not know what the actor is. C++ only.
+					IInteractInterface::Execute_Interact(OutHit.GetActor()); //Blueprint implementation only
+				}
+
+			}
+		}
+	}
+
+
+}

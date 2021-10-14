@@ -22,4 +22,11 @@ class PROJECTGLOW_API IInteractInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Interact")
+		void Interact();
+
+	UFUNCTION()
+		virtual void InteractPure() = 0;
+
 };

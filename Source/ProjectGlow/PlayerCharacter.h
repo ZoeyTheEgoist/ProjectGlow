@@ -11,7 +11,11 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Interfaces/InteractInterface.h"
+
+
 #include "PlayerCharacter.generated.h"
+
 
 UCLASS()
 class PROJECTGLOW_API APlayerCharacter : public ACharacter
@@ -46,6 +50,11 @@ public:
 	void MoveRight(float Axis);
 	void Sprint();
 	void StopSprinting();
+
+	// Interact Interface Functions and Properties
+	void Interact();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Interaction)
+	float TraceDistance;
 	
 
 

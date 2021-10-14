@@ -2,6 +2,7 @@
 
 #pragma once
 
+
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Interfaces/InteractInterface.h"
@@ -9,6 +10,7 @@
 #include "Engine/StaticMesh.h"
 #include "UObject/ConstructorHelpers.h"
 #include "MultiSwitch.generated.h"
+
 
 UCLASS()
 class PROJECTGLOW_API AMultiSwitch : public AActor, public IInteractInterface
@@ -35,6 +37,8 @@ public:
 		class UMaterial* MaterialInactive;
 
 	bool bOpen;
+
+	void CheckDials();
 
 
 protected:

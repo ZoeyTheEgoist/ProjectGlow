@@ -45,6 +45,19 @@ void AMultiSwitch::Tick(float DeltaTime)
 void AMultiSwitch::Interact_Implementation()
 {
 
+	CheckDials();
+
+
+}
+
+void AMultiSwitch::InteractPure()
+{
+	//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("Pure"));
+}
+
+
+void AMultiSwitch::CheckDials() {
+
 	// Find all DialStone actors
 	TSubclassOf<ADialStone> classToFind;
 	classToFind = ADialStone::StaticClass();
@@ -72,10 +85,4 @@ void AMultiSwitch::Interact_Implementation()
 		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, TEXT("Failed!"));
 		MeshComponent->SetMaterial(0, MaterialInactive);
 	}
-
-}
-
-void AMultiSwitch::InteractPure()
-{
-	//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("Pure"));
 }
